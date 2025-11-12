@@ -162,6 +162,45 @@
             font-size: 16px;
             font-weight: 600;
         }
+
+        /* === NEW: MOBILE RESPONSIVE RULES === */
+        @media (max-width: 800px) {
+            body {
+                padding: 0; /* Remove padding for edge-to-edge feel */
+            }
+            .container {
+                margin: 0;
+                border-radius: 0;
+                box-shadow: none;
+            }
+            .main-content {
+                flex-direction: column; /* Force columns to stack */
+            }
+            .builder, .output {
+                min-width: 0; /* Allow columns to shrink */
+                border-right: none;
+                padding: 20px 15px;
+            }
+            .output {
+                border-top: 1px solid var(--border-color);
+            }
+            header {
+                padding: 20px 15px;
+            }
+            header h1 {
+                font-size: 20px;
+            }
+            /* Stack jingle builder into one column */
+            .jingle-structure {
+                grid-template-columns: 1fr;
+            }
+            /* Stack buttons */
+            .button-row {
+                flex-direction: column;
+            }
+        }
+        /* === END NEW RULES === */
+
     </style>
 </head>
 <body>
