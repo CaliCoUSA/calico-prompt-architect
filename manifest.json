@@ -1,0 +1,9 @@
+{
+  "name": "CaliCo Prompt Architect",
+  "short_name": "Architect",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#6A0DAD",
+  "theme_color": "#6A0DAD",
+  "description": "CaliCo Internal AI Prompt Tool."
+}
