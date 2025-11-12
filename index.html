@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CaliCo AI Prompt Architect</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6A0DAD"> <style>
+        :root {
+            --primary: #6A0DAD; /* Royal Purple */
+            --secondary: #FFC107; /* Yellow */
+            --accent: #36454F; /* Charcoal */
+            --bg-light: #f4f7f6;
+            --bg-white: #ffffff;
+            --text-light: #ffffff;
+            --border-color: #e9ecef;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-light);
+            margin: 0;
+            padding: 20px;
+            color: var(--accent);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            background-color: var(--bg-white);
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        header {
+            background-color: var(--primary);
+            color: var(--text-light);
+            padding: 25px 35px;
+            border-bottom: 4px solid var(--secondary);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .builder {
+            flex: 1;
+            padding: 30px 35px;
+            border-right: 1px solid var(--border-color);
+            min-width: 400px;
+        }
+        .output {
+            flex: 1;
+            padding: 30px 35px;
+            background-color: #f8f9fa;
+            min-width: 400px;
+        }
+        h2 {
+            font-size: 20px;
+            margin-top: 0;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        .output h2 {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        .form-row {
+            margin-bottom: 20px;
+        }
+        .form-row label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .form-row select, .form-row input, .form-row textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+        .form-row textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .service-form {
+            display: none; /* Hidden by default */
+            padding-top: 20px;
+            border-top: 1px dashed var(--border-color);
+            margin-top: 20px;
+        }
+        .jingle-structure {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .jingle-structure .form-row {
+            margin-bottom: 0;
+        }
+        .jingle-structure .form-row input {
+            padding: 8px 12px;
+        }
+        .button-row {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .button-row button {
+            border: none;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            flex: 1;
+        }
+        #generate-btn {
+            background-color: var(--primary);
+            color: var(--text-light);
+        }
+        #reset-btn {
+            background-color: var(--accent);
+            color: var(--text-light);
+        }
+        .output-box {
+            background-color: var(--bg-white);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+        .output-box h3 {
+            margin: 0 0 10px;
+            font-size: 16px;
+        }
+        .output-box pre {
+            background-color: #fdfdfd;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #212529;
+            overflow-x: auto;
+        }
+        .cta {
+            margin-top: 20px;
+            background-color: var(--secondary);
+            color: var(--accent);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .cta-slogan {
+            font-size: 16px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>CaliCo AI Prompt Architect</h1>
+        </header>
+
+        <div class="main-content">
+            <div class="builder">
+                <h2>Project Builder</h2>
+
+                <div class="form-row">
+                    <label for="client-name">Client Name</label>
+                    <input type="text" id="client-name" placeholder="e.g., Pipes & Plugs Plumbing">
+                </div>
+                <div class="form-row">
+                    <label for="project-name">Project Name</label>
+                    <input type="text" id="project-name" placeholder="e.g., Spring Radio Ad">
+                </div>
+                <div class="form-row">
+                    <label for="main-service">Core Service</label>
+                    <select id="main-service">
+                        <option value="none">-- Select a Service --</option>
+                        <option value="logo">Logo Design</option>
+                        <option value="jingle">Jingle Creation</option>
+                        <option value="voiceover">Voiceover</option>
+                        <option value="video">Explainer Video</option>
+                        <option value="adcopy">Ad Copy</option>
+                    </select>
+                </div>
+
+                <div id="logo-form" class="service-form">
+                    <h3>Logo Details</h3>
+                    <div class="form-row">
+                        <label for="logo-tool">AI Generation Tool</label>
+                        <select id="logo-tool">
+                            <option value="Gemini">Gemini</option>
+                            <option value="ChatGPT (DALL-E 3)">ChatGPT (DALL-E 3)</option>
+                            <option value="Grok">Grok</option>
+                            <option value="Claude">Claude</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <label for="logo-style">Style</label>
+                        <input type="text" id="logo-style" placeholder="e.g., Minimalist, vector, clean">
+                    </div>
+                    <div class="form-row">
+                        <label for="logo-elements">Core Elements / Subject</label>
+                        <input type="text" id="logo-elements" placeholder="e.g., A single water drop, a wrench">
+                    </div>
+                    <div class="form-row">
+                        <label for="logo-colors">Color Palette</label>
+                        <input type="text" id="logo-colors" placeholder="e.g., Deep blues and silver">
+                    </div>
+                </div>
+
+                <div id="jingle-form" class="service-form">
+                    <h3>Jingle Lyric Architect</h3>
+                    <div class="form-row">
+                        <label for="jingle-llm-tool">Lyric Generation Tool (LLM)</label>
+                        <select id="jingle-llm-tool">
+                            <option value="Gemini">Gemini</option>
+                            <option value="ChatGPT">ChatGPT</option>
+                            <option value="Grok">Grok</option>
+                            <option value="Claude">Claude</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <label for="jingle-music-tool">Music Generation Tool (Target)</label>
+                        <select id="jingle-music-tool">
+                            <option value="Suno AI">Suno AI</option>
+                            <option value="Donna AI">Donna AI</option>
+                            <option value="Eleven Labs">Eleven Labs (Vocal Only)</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <label for="jingle-tone">Tone & Style</label>
+                        <input type="text" id="jingle-tone" placeholder="e.g., Upbeat Pop, catchy, professional">
+                    </div>
+                    <div class="form-row">
+                        <label for="jingle-message">Core Message / Key Info</label>
+                        <textarea id="jingle-message" placeholder="e.g., Reliable, 24/7 service, 555-1234. Family owned. Mention the spring discount."></textarea>
+                    </div>
+                    
+                    <h3>Song Structure Builder</h3>
+                    <div class="jingle-structure">
+                        <div class="form-row"><label for="j-intro">Intro</label><input type="number" id="j-intro" value="0" min="0" max="2"></div>
+                        <div class="form-row"><label for="j-verse">Verse</label><input type="number" id="j-verse" value="2" min="0" max="5"></div>
+                        <div class="form-row"><label for="j-prechorus">PreChorus</label><input type="number" id="j-prechorus" value="0" min="0" max="5"></div>
+                        <div class="form-row"><label for="j-chorus">Chorus</label><input type="number" id="j-chorus" value="2" min="0" max="5"></div>
+                        <div class="form-row"><label for="j-bridge">Bridge</label><input type="number" id="j-bridge" value="0" min="0" max="2"></div>
+                        <div class="form-row"><label for="j-interlude">Instrumental Interlude</label><input type="number" id="j-interlude" value="0" min="0" max="3"></div>
+                        <div class="form-row"><label for="j-solo">Solo</label><input type="number" id="j-solo" value="0" min="0" max="2"></div>
+                        <div class="form-row"><label for="j-outro">Outro</label><input type="number" id="j-outro" value="0" min="0" max="2"></div>
+                    </div>
+                </div>
+
+                <div id="voiceover-form" class="service-form">
+                    <h3>Voiceover Details</h3>
+                    <div class="form-row">
+                        <label for="vo-tool">AI Generation Tool</label>
+                        <select id="vo-tool">
+                            <option value="Eleven Labs">Eleven Labs</option>
+                            <option value="Gemini">Gemini</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <label for="vo-script">Script</label>
+                        <textarea id="vo-script" placeholder="Paste the final, approved script here..."></textarea>
+                    </div>
+                    <div class="form-row">
+                        <label for="vo-tone">Vocal Style & Tone</label>
+                        <input type="text" id="vo-tone" placeholder="e.g., Professional, warm, male, middle-aged, Standard American accent">
+                    </div>
+                </div>
+
+                <div id="video-form" class="service-form">
+                    <h3>Explainer Video Details</h3>
+                    <div class="form-row">
+                        <label for="video-tool">AI Generation Tool</label>
+                        <select id="video-tool">
+                            <option value="Veo">Veo</option>
+                            <option value="Sora">Sora</option>
+                            <option value="NotebookLM">NotebookLM (Scripting)</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <label for="video-script">Scene Description / Script</label>
+                        <textarea id="video-script" placeholder="Paste the script or describe the desired scenes..."></textarea>
+                    </div>
+                    <div class="form-row">
+                        <label for="video-style">Visual Style</label>
+                        <input type="text" id="video-style" placeholder="e.g., 2D animation, whiteboard, photorealistic, cinematic">
+                    </div>
+                </div>
+
+                <div id="adcopy-form" class="service-form">
+                    <h3>Ad Copy Details</h3>
+                    <div class="form-row">
+                        <label for="adcopy-tool">AI Generation Tool</label>
+                        <select id="adcopy-tool">
+                            <option value="Gemini">Gemini</option>
+                            <option value="ChatGPT">ChatGPT</option>
+                            <option value="Grok">Grok</option>
+                            <option value="Claude">Claude</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <label for="adcopy-platform">Platform</label>
+                        <input type="text" id="adcopy-platform" placeholder="e.g., Facebook Ad, Google Search Ad">
+                    </div>
+                    <div class="form-row">
+                        <label for="adcopy-offer">The Offer</label>
+                        <input type="text" id="adcopy-offer" placeholder="e.g., 20% off all services in May">
+                    </div>
+                    <div class="form-row">
+                        <label for="adcopy-cta">Call to Action (CTA)</label>
+                        <input type="text" id="adcopy-cta" placeholder="e.g., Book Now, Learn More">
+                    </div>
+                </div>
+
+                <div class="button-row">
+                    <button id="generate-btn">Generate Brief & Prompts</button>
+                    <button id="reset-btn">Reset All</button>
+                </div>
+            </div>
+
+            <div class="output">
+                <h2>Creative Brief</h2>
+                <div class="output-box">
+                    <div id="brief-output">
+                        <p>Your "Artist Approved" creative brief will appear here once you fill out the form and click "Generate."</p>
+                    </div>
+                </div>
+
+                <h2>AI-Ready Prompts</h2>
+                <div class="output-box">
+                    <div id="prompt-output">
+                        <p>Your "AI Driven" prompts, optimized for the selected tools, will appear here.</p>
+                    </div>
+                </div>
+
+                <div class="cta">
+                    <div class="cta-slogan">CaliCo: AI Driven, Artist Approved!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+        
+            // === DOM ELEMENTS ===
+            const mainService = document.getElementById('main-service');
+            const generateBtn = document.getElementById('generate-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const briefOutput = document.getElementById('brief-output');
+            const promptOutput = document.getElementById('prompt-output');
+
+            const formDivs = {
+                logo: document.getElementById('logo-form'),
+                jingle: document.getElementById('jingle-form'),
+                voiceover: document.getElementById('voiceover-form'),
+                video: document.getElementById('video-form'),
+                adcopy: document.getElementById('adcopy-form')
+            };
+            
+            // === EVENT LISTENERS ===
+            
+            mainService.addEventListener('change', () => {
+                Object.values(formDivs).forEach(form => {
+                    if(form) form.style.display = 'none';
+                });
+                const selectedForm = formDivs[mainService.value];
+                if (selectedForm) {
+                    selectedForm.style.display = 'block';
+                }
+            });
+
+            generateBtn.addEventListener('click', generateBriefAndPrompts);
+            
+            resetBtn.addEventListener('click', () => { // THIS WAS THE BUG. IT IS NOW FIXED.
+                document.querySelectorAll('input[type="text"], input[type="number"], select, textarea').forEach(el => {
+                    if (el.tagName === 'SELECT') el.selectedIndex = 0;
+                    else if (el.type === 'number') el.value = 0;
+                    else el.value = '';
+                });
+                
+                if(document.getElementById('j-verse')) document.getElementById('j-verse').value = '2';
+                if(document.getElementById('j-chorus')) document.getElementById('j-chorus').value = '2';
+
+                Object.values(formDivs).forEach(form => {
+                    if(form) form.style.display = 'none';
+                });
+                briefOutput.innerHTML = '<p>Your "Artist Approved" creative brief will appear here...</p>';
+                promptOutput.innerHTML = '<p>Your "AI Driven" prompts, optimized for the selected tools, will appear here.</p>';
+            });
+
+            // === MAIN GENERATION FUNCTION ===
+            function generateBriefAndPrompts() {
+                const client = document.getElementById('client-name').value || '[Client Name]';
+                const project = document.getElementById('project-name').value || '[Project Name]';
+                const service = mainService.value;
+
+                let briefHTML = `<h3>${project} for ${client}</h3><ul>`;
+                let promptHTML = '';
+
+                try {
+                    switch (service) {
+                        case 'logo':
+                            const logoData = generateLogoOutputs(client);
+                            briefHTML += logoData.brief;
+                            promptHTML = logoData.prompt;
+                            break;
+                        case 'jingle':
+                            const jingleData = generateJingleOutputs(client);
+                            briefHTML += jingleData.brief;
+                            promptHTML = jingleData.prompt;
+                            break;
+                        case 'voiceover':
+                            const voData = generateVoiceoverOutputs(client);
+                            briefHTML += voData.brief;
+                            promptHTML = voData.prompt;
+                            break;
+                        case 'video':
+                            const videoData = generateVideoOutputs(client);
+                            briefHTML += videoData.brief;
+                            promptHTML = videoData.prompt;
+                            break;
+                        case 'adcopy':
+                            const adData = generateAdCopyOutputs(client);
+                            briefHTML += adData.brief;
+                            promptHTML = adData.prompt;
+                            break;
+                        default:
+                            briefHTML = '<p>Please select a service first.</p>';
+                            promptHTML = '<p>No service selected.</p>';
+                    }
+                    briefHTML += '</ul>';
+                } catch (error) {
+                    console.error("Error during generation:", error);
+                    briefHTML = `<p style="color: red;">An error occurred. Check console.</p>`;
+                    promptHTML = `<p style="color: red;">Failed to generate prompts. ${error.message}</p>`;
+                }
+
+                briefOutput.innerHTML = briefHTML;
+                promptOutput.innerHTML = promptHTML;
+            }
+
+            // === HELPER FUNCTIONS FOR EACH SERVICE ===
+
+            function generateLogoOutputs(client) {
+                const tool = document.getElementById('logo-tool').value;
+                const style = document.getElementById('logo-style').value || '[Style]';
+                const elements = document.getElementById('logo-elements').value || '[Elements]';
+                const colors = document.getElementById('logo-colors').value || '[Colors]';
+
+                const brief = `
+                    <li><strong>Service:</strong> Logo Design</li>
+                    <li><strong>Tool:</strong> ${tool}</li>
+                    <li><strong>Style:</strong> ${style}</li>
+                    <li><strong>Elements:</strong> ${elements}</li>
+                    <li><strong>Colors:</strong> ${colors}</li>
+                `;
+                const prompt = `You are a professional brand designer and logo concept artist.
+                    \n\n<strong>Task:</strong> Create a logo concept for a client named "${client}".
+                    \n<strong>Style:</strong> ${style}
+                    \n<strong>Subject/Elements:</strong> The logo must incorporate ${elements}.
+                    \n<strong>Color Palette:</strong> ${colors}.
+                    \n\n<strong>Requirements:</strong> The logo must be clean, professional, and suitable for a website. Generate 4 distinct options on a plain white background for review.`;
+                const promptHTML = `<h4>Prompt for ${tool}</h4><pre><code>${prompt}</code></pre>`;
+                return { brief, prompt: promptHTML };
+            }
+
+            function generateJingleOutputs(client) {
+                const llm = document.getElementById('jingle-llm-tool').value;
+                const musicTool = document.getElementById('jingle-music-tool').value;
+                const tone = document.getElementById('jingle-tone').value || '[Tone/Style]';
+                const message = document.getElementById('jingle-message').value || '[Core Message]';
+                const structureCounts = {
+                    'Intro': document.getElementById('j-intro').value,
+                    'Verse': document.getElementById('j-verse').value,
+                    'PreChorus': document.getElementById('j-prechorus').value,
+                    'Chorus': document.getElementById('j-chorus').value,
+                    'Bridge': document.getElementById('j-bridge').value,
+                    'Instrumental Interlude': document.getElementById('j-interlude').value,
+                    'Solo': document.getElementById('j-solo').value,
+                    'Outro': document.getElementById('j-outro').value
+                };
+                let components = [];
+                let structureBrief = '<li><strong>Song Structure:</strong></li><ul>';
+                for (const [key, value] of Object.entries(structureCounts)) {
+                    if (value > 0) {
+                        components.push(`<li><strong>${key}:</strong> ${value} instance(s)</li>`);
+                    }
+                }
+                structureBrief += components.join('') + '</ul>';
+                const brief = `
+                    <li><strong>Service:</strong> Jingle Creation</li>
+                    <li><strong>Lyric Tool:</strong> ${llm}</li>
+                    <li><strong>Music Tool:</strong> ${musicTool}</li>
+                    <li><strong>Tone & Style:</strong> ${tone}</li>
+                    <li><strong>Core Message:</strong> ${message}</li>
+                    ${structureBrief}
+                `;
+                const prompt1 = `You are an expert jingle copywriter and professional song arranger. Your task is to write catchy, professional lyrics for a 30-second jingle and arrange them into a complete song structure.
+                    \n\n<strong>CLIENT & TONE:</strong>
+                    \n* <strong>Client:</strong> ${client}
+                    \n* <strong>Tone:</strong> ${tone}
+                    \n\n<strong>LYRIC CONTENT:</strong>
+                    \n* The lyrics must incorporate the core message: "${message}"
+                    \n\n<strong>REQUIRED SONG STRUCTURE & COMPONENTS:</strong>
+                    \nYour primary task is to create a complete song structure that logically arranges the following components. You must use the bracketed tags to label each section clearly.
+                    \n${components.join('\n')}
+                    \n\n<strong>CRUCIAL INSTRUCTIONS:</strong>
+                    \n1. Arrange these components in an order that makes logical and musical sense for a catchy jingle.
+                    \n2. **Do not write any lyrics** for the \`[Solo]\`, \`[Outro]\`, or \`[Instrumental Interlude]\` sections. Simply place these tags in the structure as placeholders for the music.
+                    \n3. Write lyrics for all \`[Verse]\`, \`[Chorus]\`, \`[Bridge]\`, \`[PreChorus]\`, and \`[Intro]\` sections as appropriate.`;
+                let prompt2 = '';
+                if (musicTool === 'Suno AI' || musicTool === 'Donna AI') {
+                    prompt2 = `[Song Style: ${tone}]
+                        \n\n[Lyrics: (PASTE YOUR ARTIST-APPROVED LYRICS AND STRUCTURE HERE)]`;
+                } else if (musicTool === 'Eleven Labs') {
+                    prompt2 = `(This tool is for vocals only. Use the lyrics generated in Step 1 to feed into Eleven Labs with a singing voice model.)`;
+                }
+                const promptHTML = `
+                    <h4>PROMPT 1: Lyric Architecture (For ${llm})</h4>
+                    <pre><code>${prompt1}</code></pre>
+                    <h4>PROMPT 2: Music Generation (For ${musicTool})</h4>
+                    <p><strong>Instructions:</strong> First, get the "Artist Approved" lyrics from Prompt 1. Then, use this template for your music tool.</p>
+                    <pre><code>${prompt2}</code></pre>`;
+                return { brief, prompt: promptHTML };
+            }
+
+            function generateVoiceoverOutputs(client) {
+                const tool = document.getElementById('vo-tool').value;
+                const script = document.getElementById('vo-script').value || '[Script]';
+                const tone = document.getElementById('vo-tone').value || '[Vocal Style]';
+                const brief = `
+                    <li><strong>Service:</strong> Voiceover</li>
+                    <li><strong>Tool:</strong> ${tool}</li>
+                    <li><strong>Vocal Style:</strong> ${tone}</li>
+                    <li><strong>Script:</strong> ${script.substring(0, 50)}...</li>
+                `;
+                let promptHTML = '';
+                if (tool === 'Eleven Labs') {
+                    promptHTML = `<h4>Instructions for Eleven Labs</h4>
+                        <p><strong>1. Voice Settings:</strong></p>
+                        <ul>
+                            <li>Find a voice matching: "${tone}"</li>
+                            <li>Set Stability: (e.g., 0.7)</li>
+                            <li>Set Clarity / Style Exaggeration: (e.g., 0.8)</li>
+                        </ul>
+                        <p><strong>2. Script to Paste:</strong></p>
+                        <pre><code>${script}</code></pre>`;
+                } else { // For Gemini
+                    promptHTML = `<h4>Audio Generation Prompt for ${tool}</h4>
+                        <pre><code>Generate a high-quality audio reading of the following script.
+                        \n\n<strong>Vocal Style:</strong> ${tone}.
+                        \n\n<strong>Script:</strong>
+                        \n"${script}"
+                        </code></pre>`;
+                }
+                return { brief, prompt: promptHTML };
+            }
+
+            function generateVideoOutputs(client) {
+                const tool = document.getElementById('video-tool').value;
+                const script = document.getElementById('video-script').value || '[Script/Scenes]';
+                const style = document.getElementById('video-style').value || '[Visual Style]';
+                const brief = `
+                    <li><strong>Service:</strong> Explainer Video</li>
+                    <li><strong>Tool:</strong> ${tool}</li>
+                    <li><strong>Visual Style:</strong> ${style}</li>
+                    <li><strong>Script/Description:</strong> ${script.substring(0, 50)}...</li>
+                `;
+                let prompt = '';
+                if (tool === 'NotebookLM') {
+                    prompt = `You are a professional scriptwriter for short, engaging explainer videos.
+                    \n\n<strong>Task:</strong> Take the following raw notes and turn them into a clear, concise 60-second video script with scene descriptions.
+                    \n<strong>Style:</strong> ${style}
+                    \n<strong>Client:</strong> ${client}
+                    \n<strong>Raw Notes / Description:</strong>
+                    \n${script}`;
+                } else { // For Veo/Sora
+                    prompt = `Generate a 60-second video based on the following scenes and descriptions.
+                    \n\n<strong>Overall Style:</strong> ${style}
+                    \n<strong>Client:</strong> ${client}
+                    \n\n<strong>Scene Descriptions:</strong>
+                    \n${script}`;
+                }
+                const promptHTML = `<h4>Prompt for ${tool}</h4><pre><code>${prompt}</code></pre>`;
+                return { brief, prompt: promptHTML };
+            }
+
+            function generateAdCopyOutputs(client) {
+                const tool = document.getElementById('adcopy-tool').value;
+                const platform = document.getElementById('adcopy-platform').value || '[Platform]';
+                const offer = document.getElementById('adcopy-offer').value || '[Offer]';
+                const cta = document.getElementById('adcopy-cta').value || '[Call to Action]';
+                const brief = `
+                    <li><strong>Service:</strong> Ad Copy</li>
+                    <li><strong>Tool:</strong> ${tool}</li>
+                    <li><strong>Platform:</strong> ${platform}</li>
+                    <li><strong>The Offer:</strong> ${offer}</li>
+                    <li><strong>Call to Action:</strong> ${cta}</li>
+                `;
+                const prompt = `You are an expert direct-response copywriter for ${platform}.
+                    \n\n<strong>Task:</strong> Write 3 compelling ad variations for a client named "${client}".
+                    \n<strong>The Offer:</strong> ${offer}
+                    \n<strong>The Call to Action:</strong> ${cta}
+                    \n\nGenerate 3 options, each with a strong hook, clear body copy, and a powerful call to action optimized for ${platform}.`;
+                const promptHTML = `<h4>Prompt for ${tool}</h4><pre><code>${prompt}</code></pre>`;
+                return { brief, prompt: promptHTML };
+            }
+
+        }); // This closes the DOMContentLoaded listener
+    </script>
+</body>
+</html>
